@@ -5,9 +5,6 @@ on:
     tags:
       - v*
 
-env:
-  GO_VERSION: '1.21'
-
 # Request permissions to write (edit, create) new releases
 permissions:
   contents: write
@@ -17,13 +14,14 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - name: Setup golang ${{ env.GO_VERSION }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ env.GO_VERSION }}
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Setup golang
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
 
       - name: Build
         run: go build -v .
