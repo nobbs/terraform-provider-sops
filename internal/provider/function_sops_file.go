@@ -2,16 +2,14 @@ package provider
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/getsops/sops/v3/decrypt"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/nobbs/terraform-provider-sops/internal/provider/utils"
 	"github.com/nobbs/terraform-provider-sops/internal/typeutils"
-	"github.com/wlevene/ini"
-	"gopkg.in/yaml.v3"
 )
 
 var sopsFileReturnAttrTypes = map[string]attr.Type{
@@ -41,11 +39,11 @@ func (f *SopsFile) Definition(ctx context.Context, req function.DefinitionReques
 				Name:        "file",
 				Description: "The path to the sops encrypted file to read and decrypt.",
 			},
-			function.StringParameter{
-				Name:           "format",
-				Description:    "The format of the file to read. If not provided, the format will be inferred from the file extension.",
-				AllowNullValue: true,
-			},
+		},
+		VariadicParameter: function.StringParameter{
+			Name:           "format",
+			Description:    "The format of the encrypted file. Optional, if provided, one of 'yaml', 'json', 'dotenv', 'ini', or 'binary'.",
+			AllowNullValue: true,
 		},
 
 		Return: function.ObjectReturn{
@@ -55,29 +53,45 @@ func (f *SopsFile) Definition(ctx context.Context, req function.DefinitionReques
 }
 
 func (f *SopsFile) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
-	var file, format string
+	var file string
+	var varargs []string
 
-	resp.Error = req.Arguments.Get(ctx, &file, &format)
+	resp.Error = req.Arguments.Get(ctx, &file, &varargs)
 	if resp.Error != nil {
 		return
 	}
 
-	// decrypt
+	// infer format from file extension if not explicitly provided
+	format := ""
+	if len(varargs) > 0 {
+		format = varargs[0]
+	} else {
+		format = utils.FileFormatFromPath(file)
+	}
+
+	if !utils.IsValidFormat(format) {
+		resp.Error = function.NewFuncError(fmt.Sprintf("invalid format: %s", format))
+		return
+	}
+
+	// decrypt sops file
 	cleartext, err := decrypt.File(file, format)
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to decrypt file: %v", err))
 		return
 	}
 
-	var jsonBytes []byte
+	var json []byte
 
 	switch format {
 	case "yaml":
-		jsonBytes, err = readYAML(cleartext)
+		json, err = utils.ReadYAML(cleartext)
 	case "json":
-		jsonBytes, err = readJSON(cleartext)
+		json, err = utils.ReadJSON(cleartext)
 	case "ini":
-		jsonBytes, err = readINI(cleartext)
+		json, err = utils.ReadINI(cleartext)
+	case "dotenv":
+		json, err = utils.ReadENV(cleartext)
 	}
 
 	if err != nil {
@@ -85,9 +99,9 @@ func (f *SopsFile) Run(ctx context.Context, req function.RunRequest, resp *funct
 		return
 	}
 
-	dt, err := typeutils.JSONToDynamicImplied(jsonBytes)
+	dynamicData, err := typeutils.JSONToDynamicImplied(json)
 	if err != nil {
-		resp.Error = function.NewFuncError(fmt.Sprintf("failed to convert decrypted data to dynamic: %v", err))
+		resp.Error = function.NewFuncError(fmt.Sprintf("failed to convert decrypted data to dynamic data: %v", err))
 		return
 	}
 
@@ -95,7 +109,7 @@ func (f *SopsFile) Run(ctx context.Context, req function.RunRequest, resp *funct
 		sopsFileReturnAttrTypes,
 		map[string]attr.Value{
 			"raw":  types.StringValue(string(cleartext)),
-			"data": dt,
+			"data": dynamicData,
 		},
 	)
 
@@ -105,38 +119,4 @@ func (f *SopsFile) Run(ctx context.Context, req function.RunRequest, resp *funct
 	}
 
 	resp.Error = resp.Result.Set(ctx, &result)
-}
-
-func readYAML(data []byte) ([]byte, error) {
-	var v any
-	err := yaml.Unmarshal(data, &v)
-	if err != nil {
-		return nil, err
-	}
-
-	return json.Marshal(v)
-}
-
-func readJSON(data []byte) ([]byte, error) {
-	var v any
-	err := json.Unmarshal(data, &v)
-	if err != nil {
-		return nil, err
-	}
-
-	return json.Marshal(v)
-}
-
-func readINI(data []byte) ([]byte, error) {
-	x := ini.New().Load(data)
-	if err := x.Err(); err != nil {
-		return nil, err
-	}
-
-	v := x.Marshal2Json()
-	if err := x.Err(); err != nil {
-		return nil, err
-	}
-
-	return v, nil
 }
