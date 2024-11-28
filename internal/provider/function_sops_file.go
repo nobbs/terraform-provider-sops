@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/nobbs/terraform-provider-sops/internal/typeutils"
+	"github.com/wlevene/ini"
+	"gopkg.in/yaml.v3"
 )
 
 var sopsFileReturnAttrTypes = map[string]attr.Type{
@@ -67,16 +69,19 @@ func (f *SopsFile) Run(ctx context.Context, req function.RunRequest, resp *funct
 		return
 	}
 
-	var data any
-	err = json.Unmarshal(cleartext, &data)
-	if err != nil {
-		resp.Error = function.NewFuncError(fmt.Sprintf("failed to unmarshal decrypted data: %v", err))
-		return
+	var jsonBytes []byte
+
+	switch format {
+	case "yaml":
+		jsonBytes, err = readYAML(cleartext)
+	case "json":
+		jsonBytes, err = readJSON(cleartext)
+	case "ini":
+		jsonBytes, err = readINI(cleartext)
 	}
 
-	jsonBytes, err := json.Marshal(data)
 	if err != nil {
-		resp.Error = function.NewFuncError(fmt.Sprintf("failed to marshal decrypted data: %v", err))
+		resp.Error = function.NewFuncError(fmt.Sprintf("failed to unmarshal decrypted data: %v", err))
 		return
 	}
 
@@ -100,4 +105,38 @@ func (f *SopsFile) Run(ctx context.Context, req function.RunRequest, resp *funct
 	}
 
 	resp.Error = resp.Result.Set(ctx, &result)
+}
+
+func readYAML(data []byte) ([]byte, error) {
+	var v any
+	err := yaml.Unmarshal(data, &v)
+	if err != nil {
+		return nil, err
+	}
+
+	return json.Marshal(v)
+}
+
+func readJSON(data []byte) ([]byte, error) {
+	var v any
+	err := json.Unmarshal(data, &v)
+	if err != nil {
+		return nil, err
+	}
+
+	return json.Marshal(v)
+}
+
+func readINI(data []byte) ([]byte, error) {
+	x := ini.New().Load(data)
+	if err := x.Err(); err != nil {
+		return nil, err
+	}
+
+	v := x.Marshal2Json()
+	if err := x.Err(); err != nil {
+		return nil, err
+	}
+
+	return v, nil
 }
