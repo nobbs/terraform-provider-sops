@@ -8,6 +8,7 @@ require (
 	github.com/hashicorp/terraform-plugin-framework v1.13.0
 	github.com/hashicorp/terraform-plugin-go v0.25.0
 	github.com/hashicorp/terraform-plugin-testing v1.11.0
+	github.com/joho/godotenv v1.5.1
 	github.com/wlevene/ini v0.1.5
 	gopkg.in/yaml.v3 v3.0.1
 )
