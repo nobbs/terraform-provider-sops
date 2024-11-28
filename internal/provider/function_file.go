@@ -1,3 +1,6 @@
+// Copyright (c) Alexej Disterhoft <alexej@disterhoft.de>
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -9,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/nobbs/terraform-provider-sops/internal/provider/utils"
-	"github.com/nobbs/terraform-provider-sops/internal/typeutils"
 )
 
 var sopsFileReturnAttrTypes = map[string]attr.Type{
@@ -17,19 +19,19 @@ var sopsFileReturnAttrTypes = map[string]attr.Type{
 	"data": types.DynamicType,
 }
 
-var _ function.Function = &SopsFile{}
+var _ function.Function = &File{}
 
-type SopsFile struct{}
+type File struct{}
 
 func NewSopsFileFunction() function.Function {
-	return &SopsFile{}
+	return &File{}
 }
 
-func (f *SopsFile) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
-	resp.Name = "sops_file"
+func (f *File) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
+	resp.Name = "file"
 }
 
-func (f *SopsFile) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
+func (f *File) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
 		Summary:     "Read and decrypt a sops encrypted file into a string",
 		Description: "Given a file path to a sops encrypted file, this function will read and decrypt the file into a string.",
@@ -41,9 +43,8 @@ func (f *SopsFile) Definition(ctx context.Context, req function.DefinitionReques
 			},
 		},
 		VariadicParameter: function.StringParameter{
-			Name:           "format",
-			Description:    "The format of the encrypted file. Optional, if provided, one of 'yaml', 'json', 'dotenv', 'ini', or 'binary'.",
-			AllowNullValue: true,
+			Name:        "format",
+			Description: "The format of the encrypted file. Optional, if provided, one of 'yaml', 'json', 'dotenv', 'ini', or 'binary'.",
 		},
 
 		Return: function.ObjectReturn{
@@ -52,7 +53,7 @@ func (f *SopsFile) Definition(ctx context.Context, req function.DefinitionReques
 	}
 }
 
-func (f *SopsFile) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
+func (f *File) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
 	var file string
 	var varargs []string
 
@@ -99,7 +100,7 @@ func (f *SopsFile) Run(ctx context.Context, req function.RunRequest, resp *funct
 		return
 	}
 
-	dynamicData, err := typeutils.JSONToDynamicImplied(json)
+	dynamicData, err := utils.JSONToDynamicImplied(json)
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to convert decrypted data to dynamic data: %v", err))
 		return
