@@ -79,6 +79,6 @@ jobs:
       - run: go mod download
       - env:
           TF_ACC: "1"
-          SOPS_AGE_KEY_FILE: ./test/age.key
+          SOPS_AGE_KEY_FILE: ${{ github.workspace }}/test/age.key
         run: go test -v -cover ./internal/provider/
         timeout-minutes: 10
