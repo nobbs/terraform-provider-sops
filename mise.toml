@@ -1,5 +1,6 @@
 [tools]
 go = "1.23"
+goreleaser = "latest"
 
 [env]
 SOPS_AGE_KEY_FILE = "{{ config_root }}/test/age.key"
