@@ -6,11 +6,13 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/getsops/sops/v3/decrypt"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/lithammer/dedent"
 	"github.com/nobbs/terraform-provider-sops/internal/provider/utils"
 )
 
@@ -19,32 +21,48 @@ var sopsFileReturnAttrTypes = map[string]attr.Type{
 	"data": types.DynamicType,
 }
 
-var _ function.Function = &File{}
+// Ensure that fileFunction implements the Function interface
+var _ function.Function = &fileFunction{}
 
-type File struct{}
+type fileFunction struct{}
 
-func NewSopsFileFunction() function.Function {
-	return &File{}
+func NewFileFunction() function.Function {
+	return &fileFunction{}
 }
 
-func (f *File) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
+func (f *fileFunction) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
 	resp.Name = "file"
 }
 
-func (f *File) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
+func (f *fileFunction) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary:     "Read and decrypt a sops encrypted file into a string",
-		Description: "Given a file path to a sops encrypted file, this function will read and decrypt the file into a string.",
+		Summary: "Reads and decrypts a sops encrypted file.",
+		MarkdownDescription: strings.TrimSpace(dedent.Dedent(`
+			Reads and decrypts a [sops](https://getsops.io/) encrypted file. An optional format can be
+			provided to specify the format of the encrypted file. If not provided, we will try to infer
+			the format from the file extension. Supported formats are ` + utils.Code("yaml") + `, ` +
+			utils.Code("json") + `, ` + utils.Code("dotenv") + `, ` + utils.Code("ini") + `, and ` +
+			utils.Code("binary") + `.
+
+			If the file format is any of the supported formats other than ` + utils.Code("binary") + `, the
+			decrypted data will also be returned as an object in the ` + utils.Code("data") + ` attribute.
+			Regardless of the format, the raw decrypted data will always be returned in the ` +
+			utils.Code("raw") + ` attribute.
+
+			Decryption is based on the sops library, so it will use the same heuristics and key sources
+			as sops to attempt to decrypt the file.
+		`)),
 
 		Parameters: []function.Parameter{
 			function.StringParameter{
-				Name:        "file",
-				Description: "The path to the sops encrypted file to read and decrypt.",
+				Name:                "file",
+				MarkdownDescription: "The path to the sops encrypted file.",
 			},
 		},
 		VariadicParameter: function.StringParameter{
-			Name:        "format",
-			Description: "The format of the encrypted file. Optional, if provided, one of 'yaml', 'json', 'dotenv', 'ini', or 'binary'.",
+			Name:           "format",
+			Description:    "The format of the encrypted file. Supported formats are `yaml`, `json`, `dotenv`, `ini`, and `binary`. Optional.",
+			AllowNullValue: true,
 		},
 
 		Return: function.ObjectReturn{
@@ -53,7 +71,7 @@ func (f *File) Definition(ctx context.Context, req function.DefinitionRequest, r
 	}
 }
 
-func (f *File) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
+func (f *fileFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
 	var file string
 	var varargs []string
 

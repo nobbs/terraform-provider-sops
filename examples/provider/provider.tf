@@ -1,3 +1,2 @@
-provider "scaffolding" {
-  # example configuration here
-}
+# There are no configuration options
+provider "sops" {}
