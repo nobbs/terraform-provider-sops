@@ -1,0 +1,8 @@
+{
+  "$schema": "https://github.com/googleapis/release-please/raw/refs/heads/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "release-type": "go"
+    }
+  }
+}
