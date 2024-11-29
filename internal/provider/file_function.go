@@ -21,7 +21,7 @@ var sopsFileReturnAttrTypes = map[string]attr.Type{
 	"data": types.DynamicType,
 }
 
-// Ensure that fileFunction implements the Function interface
+// Ensure that fileFunction implements the Function interface.
 var _ function.Function = &fileFunction{}
 
 type fileFunction struct{}
