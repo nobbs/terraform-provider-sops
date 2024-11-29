@@ -1,4 +1,3 @@
-# NOTE: This file is for HashiCorp specific licensing automation and can be deleted after creating a new repo with this template.
 schema_version = 1
 
 project {
