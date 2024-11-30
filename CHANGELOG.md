@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/nobbs/terraform-provider-sops/compare/v0.1.0...v0.2.0) (2024-11-30)
+
+
+### Features
+
+* add string function to read and decrypt sops encrypted strings ([#4](https://github.com/nobbs/terraform-provider-sops/issues/4)) ([b4210b7](https://github.com/nobbs/terraform-provider-sops/commit/b4210b7404db349a324f2dd606da62f5c82bcfcd))
+
 ## [0.1.0](https://github.com/nobbs/terraform-provider-sops/compare/v0.0.1...v0.1.0) (2024-11-30)
 
 
