@@ -1,64 +1,81 @@
-# Terraform Provider Scaffolding (Terraform Plugin Framework)
+# SOPS Terraform Provider
 
-_This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
-
-This repository is a *template* for a [Terraform](https://www.terraform.io) provider. It is intended as a starting point for creating Terraform providers, containing:
-
-- A resource and a data source (`internal/provider/`),
-- Examples (`examples/`) and generated documentation (`docs/`),
-- Miscellaneous meta files.
-
-These files contain boilerplate code that you will need to edit to create your own Terraform provider. Tutorials for creating Terraform providers can be found on the [HashiCorp Developer](https://developer.hashicorp.com/terraform/tutorials/providers-plugin-framework) platform. _Terraform Plugin Framework specific guides are titled accordingly._
-
-Please see the [GitHub template repository documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for how to create a new repository from this template on GitHub.
-
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://developer.hashicorp.com/terraform/registry/providers/publishing) so that others can use it.
+A Terraform provider for [sops](https://getsops.io/) providing functions to decrypt SOPS-encrypted files and strings. This provider is heavily inspired by [`carlpett/terraform-provider-sops`](https://github.com/carlpett/terraform-provider-sops) but does not rely on data sources and instead uses provider functions. This allows you to decrypt secrets without them necessarily being stored in the Terraform state as plain text.
 
 ## Requirements
 
-- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
-- [Go](https://golang.org/doc/install) >= 1.22
+As provider functions are a fairly new feature in Terraform, you will need to be using Terraform v1.8 or later.
 
-## Building The Provider
+## Usage
 
-1. Clone the repository
-1. Enter the repository directory
-1. Build the provider using the Go `install` command:
+This provider contains two provider functions:
 
-```shell
-go install
+- `file` - Decrypts a local file using SOPS
+- `string` - Decrypts a string using SOPS, useful if the secret is not stored in a local file
+
+To make use of the provider, you will need to add the provider to your Terraform configuration:
+
+```hcl
+terraform {
+  required_providers {
+    sops = {
+      source = "nobbs/sops"
+      version = "~> 0.1.0"
+    }
+  }
+}
+
+# The provider has no configuration options
+provider "sops" {}
 ```
 
-## Adding Dependencies
+## Examples
 
-This provider uses [Go modules](https://github.com/golang/go/wiki/Modules).
-Please see the Go documentation for the most up to date information about using Go modules.
+See the [examples](./examples) directory for more examples.
 
-To add a new dependency `github.com/author/dependency` to your Terraform provider:
+Once the provider is configured, you can use the provider functions in your Terraform configuration as follows:
 
-```shell
-go get github.com/author/dependency
-go mod tidy
+```hcl
+output "basic-json" {
+  value = provider::sops::file("./test/fixtures/basic.sops.json")
+}
+
+# Output:
+# basic-json = {
+#   "data" = {
+#     "abc" = "xyz"
+#     "floats" = 0.000000000314
+#     "integers" = 123
+#     "truthy" = true
+#   }
+#   "raw" = <<-EOT
+#   {
+#   	"abc": "xyz",
+#   	"integers": 123,
+#   	"truthy": true,
+#   	"floats": 3.14e-10
+#   }
+#   EOT
+# }
 ```
 
-Then commit the changes to `go.mod` and `go.sum`.
+Or using the `string` function:
 
-## Using the provider
+```hcl
+data "http" "raw" {
+  url = "https://raw.githubusercontent.com/nobbs/terraform-provider-sops/refs/heads/main/test/fixtures/raw.sops.txt"
+}
 
-Fill this in for each provider
+output "raw" {
+  value = provider::sops::string(data.http.raw.response_body)
+}
 
-## Developing the Provider
-
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (see [Requirements](#requirements) above).
-
-To compile the provider, run `go install`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
-
-To generate or update documentation, run `make generate`.
-
-In order to run the full suite of Acceptance tests, run `make testacc`.
-
-*Note:* Acceptance tests create real resources, and often cost money to run.
-
-```shell
-make testacc
+# Output:
+# raw = {
+#   "data" = null
+#   "raw" = <<-EOT
+#   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+#
+#   EOT
+# }
 ```
