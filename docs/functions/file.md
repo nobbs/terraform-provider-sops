@@ -23,7 +23,7 @@ as sops to attempt to decrypt the file.
 
 ```terraform
 output "raw" {
-  value = provider::sops::file("./test/fixtures/raw.sops.txt")
+  value = provider::sops::file("./../../../test/fixtures/raw.sops.txt")
 }
 
 # raw = {
@@ -35,7 +35,7 @@ output "raw" {
 # }
 
 output "basic-json" {
-  value = provider::sops::file("./test/fixtures/basic.sops.json")
+  value = provider::sops::file("./../../../test/fixtures/basic.sops.json")
 }
 
 # basic-json = {
@@ -56,7 +56,7 @@ output "basic-json" {
 # }
 
 output "complex-yaml" {
-  value = provider::sops::file("./test/fixtures/complex.sops.yaml")
+  value = provider::sops::file("./../../../test/fixtures/complex.sops.yaml")
 }
 
 # complex-yaml = {
