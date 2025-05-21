@@ -5,7 +5,6 @@ package provider
 
 import (
 	"context"
-	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -13,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/lithammer/dedent"
 	"github.com/nobbs/terraform-provider-sops/internal/provider/utils"
 )
@@ -28,11 +26,6 @@ type SopsProvider struct {
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
-}
-
-// SopsProviderModel describes the provider data model.
-type SopsProviderModel struct {
-	Endpoint types.String `tfsdk:"endpoint"`
 }
 
 func (p *SopsProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -60,21 +53,7 @@ func (p *SopsProvider) Schema(ctx context.Context, req provider.SchemaRequest, r
 }
 
 func (p *SopsProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	var data SopsProviderModel
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
-
-	// Example client configuration for data sources and resources
-	client := http.DefaultClient
-	resp.DataSourceData = client
-	resp.ResourceData = client
+	// no configuration needed
 }
 
 func (p *SopsProvider) Resources(ctx context.Context) []func() resource.Resource {
