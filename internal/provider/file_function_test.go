@@ -6,6 +6,7 @@ package provider
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/go-version"
@@ -16,13 +17,14 @@ import (
 )
 
 const (
-	fileFunctionConfig_raw_file          = "test/fixtures/raw.sops.txt"
-	fileFunctionConfig_basic_yaml_file   = "test/fixtures/basic.sops.yaml"
-	fileFunctionConfig_basic_json_file   = "test/fixtures/basic.sops.json"
-	fileFunctionConfig_complex_yaml_file = "test/fixtures/complex.sops.yaml"
-	fileFunctionConfig_complex_json_file = "test/fixtures/complex.sops.json"
-	fileFunctionConfig_sample_ini_file   = "test/fixtures/sample.sops.ini"
-	fileFunctionConfig_sample_env_file   = "test/fixtures/dot.sops.env"
+	fileFunctionConfig_raw_file                = "test/fixtures/raw.sops.txt"
+	fileFunctionConfig_basic_yaml_file         = "test/fixtures/basic.sops.yaml"
+	fileFunctionConfig_basic_json_file         = "test/fixtures/basic.sops.json"
+	fileFunctionConfig_complex_yaml_file       = "test/fixtures/complex.sops.yaml"
+	fileFunctionConfig_complex_json_file       = "test/fixtures/complex.sops.json"
+	fileFunctionConfig_sample_ini_file         = "test/fixtures/sample.sops.ini"
+	fileFunctionConfig_sample_env_file         = "test/fixtures/dot.sops.env"
+	fileFunctionConfig_basic_mac_mismatch_file = "test/fixtures/basic-mac-mismatch.sops.yaml"
 )
 
 func helperFileFunctionConfig(file string, format string) string {
@@ -474,6 +476,36 @@ func TestFileFunction_sample_env(t *testing.T) {
 						}),
 					),
 				},
+			},
+		},
+	})
+}
+
+func TestFileFunction_basic_mac_mismatch(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_basic_mac_mismatch_file)
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.RequireAbove(version.Must(version.NewVersion("1.8.0"))),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: helperFileFunctionConfig(fixture, ""),
+				ExpectError: regexp.MustCompile(
+					".*failed to verify data integrity.*",
+				),
+			},
+			{
+				Config: helperFileFunctionConfig(fixture, "yaml"),
+				ExpectError: regexp.MustCompile(
+					".*failed to verify data integrity.*",
+				),
 			},
 		},
 	})
