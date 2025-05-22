@@ -6,7 +6,7 @@ require (
 	github.com/getsops/sops/v3 v3.10.2
 	github.com/hashicorp/go-version v1.7.0
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
-	github.com/hashicorp/terraform-plugin-go v0.27.0
+	github.com/hashicorp/terraform-plugin-go v0.28.0
 	github.com/hashicorp/terraform-plugin-testing v1.13.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lithammer/dedent v1.1.0
