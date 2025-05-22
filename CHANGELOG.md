@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.2](https://github.com/nobbs/terraform-provider-sops/compare/v0.2.1...v0.2.2) (2025-05-22)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump github.com/hashicorp/terraform-plugin-go ([#24](https://github.com/nobbs/terraform-provider-sops/issues/24)) ([eba27ac](https://github.com/nobbs/terraform-provider-sops/commit/eba27ac066e651aec98e0b9a9d2b755d6136d6f4))
+
+
+### Continuous Integration
+
+* **deps:** add dependabot auto merge workflow ([2e63e73](https://github.com/nobbs/terraform-provider-sops/commit/2e63e73eaf9815f1a4b992b5759f003d0f73eaf7))
+* **deps:** change Dependabot auto-merge strategy to squash ([c0e32df](https://github.com/nobbs/terraform-provider-sops/commit/c0e32df7b538641a729275054e15a5218b29803d))
+* **deps:** fix dependabot auto merge workflow ([#28](https://github.com/nobbs/terraform-provider-sops/issues/28)) ([d9496cd](https://github.com/nobbs/terraform-provider-sops/commit/d9496cd7b490b18f672038f20856a90145612b17))
+
 ## [0.2.1](https://github.com/nobbs/terraform-provider-sops/compare/v0.2.0...v0.2.1) (2025-05-21)
 
 
