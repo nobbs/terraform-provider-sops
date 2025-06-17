@@ -67,7 +67,9 @@ func (p *SopsProvider) DataSources(ctx context.Context) []func() datasource.Data
 func (p *SopsProvider) Functions(ctx context.Context) []func() function.Function {
 	return []func() function.Function{
 		NewFileFunction,
+		NewFileIgnoreMacFunction,
 		NewStringFunction,
+		NewStringIgnoreMacFunction,
 	}
 }
 

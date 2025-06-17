@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/getsops/sops/v3/decrypt"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -94,7 +93,7 @@ func (f *stringFunction) Run(ctx context.Context, req function.RunRequest, resp 
 
 	// decrypt sops file
 	databytes := []byte(data)
-	cleartext, err := decrypt.Data(databytes, format)
+	cleartext, err := utils.DecryptData(databytes, format, utils.DecryptOptions{})
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to decrypt file: %v", err))
 		return

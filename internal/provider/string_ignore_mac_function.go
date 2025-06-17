@@ -15,47 +15,41 @@ import (
 	"github.com/nobbs/terraform-provider-sops/internal/provider/utils"
 )
 
-var sopsFileReturnAttrTypes = map[string]attr.Type{
-	"raw":  types.StringType,
-	"data": types.DynamicType,
+var _ function.Function = &stringIgnoreMacFunction{}
+
+type stringIgnoreMacFunction struct{}
+
+func NewStringIgnoreMacFunction() function.Function {
+	return &stringIgnoreMacFunction{}
 }
 
-// Ensure that fileFunction implements the Function interface.
-var _ function.Function = &fileFunction{}
-
-type fileFunction struct{}
-
-func NewFileFunction() function.Function {
-	return &fileFunction{}
+func (f *stringIgnoreMacFunction) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
+	resp.Name = "string_ignore_mac"
 }
 
-func (f *fileFunction) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
-	resp.Name = "file"
-}
-
-func (f *fileFunction) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
+func (f *stringIgnoreMacFunction) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary: "Reads and decrypts a sops encrypted file.",
+		Summary: "Reads and decrypts a sops encrypted string ignoring MAC mismatch.",
 		MarkdownDescription: strings.TrimSpace(dedent.Dedent(`
-			Reads and decrypts a [sops](https://getsops.io/) encrypted file. An optional format can be
-			provided to specify the format of the encrypted file. If not provided, we will try to infer
-			the format from the file extension. Supported formats are ` + utils.Code("yaml") + `, ` +
-			utils.Code("json") + `, ` + utils.Code("dotenv") + `, ` + utils.Code("ini") + `, and ` +
-			utils.Code("binary") + `.
+			Reads and decrypts a [sops](https://getsops.io/) encrypted string ignoring any MAC mismatch errors.
+			An optional format can be provided to specify the format of the encrypted string. If not
+			provided, structured data will not be automatically converted to an object. Supported formats
+			are ` + utils.Code("yaml") + `, ` + utils.Code("json") + `, ` + utils.Code("dotenv") + `, ` +
+			utils.Code("ini") + `, and ` + utils.Code("binary") + `.
 
-			If the file format is any of the supported formats other than ` + utils.Code("binary") + `, the
+			If the data format is any of the supported formats other than ` + utils.Code("binary") + `, the
 			decrypted data will also be returned as an object in the ` + utils.Code("data") + ` attribute.
 			Regardless of the format, the raw decrypted data will always be returned in the ` +
 			utils.Code("raw") + ` attribute.
 
 			Decryption is based on the sops library, so it will use the same heuristics and key sources
-			as sops to attempt to decrypt the file.
-		`)),
+			as sops to attempt to decrypt the data.
+			`)),
 
 		Parameters: []function.Parameter{
 			function.StringParameter{
-				Name:                "file",
-				MarkdownDescription: "The path to the sops encrypted file.",
+				Name:                "data",
+				MarkdownDescription: "The sops encrypted string.",
 			},
 		},
 		VariadicParameter: function.StringParameter{
@@ -65,16 +59,16 @@ func (f *fileFunction) Definition(ctx context.Context, req function.DefinitionRe
 		},
 
 		Return: function.ObjectReturn{
-			AttributeTypes: sopsFileReturnAttrTypes,
+			AttributeTypes: sopsStringReturnAttrTypes,
 		},
 	}
 }
 
-func (f *fileFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
-	var file string
+func (f *stringIgnoreMacFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
+	var data string
 	var varargs []string
 
-	resp.Error = req.Arguments.Get(ctx, &file, &varargs)
+	resp.Error = req.Arguments.Get(ctx, &data, &varargs)
 	if resp.Error != nil {
 		return
 	}
@@ -84,7 +78,7 @@ func (f *fileFunction) Run(ctx context.Context, req function.RunRequest, resp *f
 	if len(varargs) > 0 {
 		format = varargs[0]
 	} else {
-		format = utils.FileFormatFromPath(file)
+		format = "binary"
 	}
 
 	if !utils.IsValidFormat(format) {
@@ -93,7 +87,10 @@ func (f *fileFunction) Run(ctx context.Context, req function.RunRequest, resp *f
 	}
 
 	// decrypt sops file
-	cleartext, err := utils.DecryptFile(file, format, utils.DecryptOptions{})
+	databytes := []byte(data)
+	cleartext, err := utils.DecryptData(databytes, format, utils.DecryptOptions{
+		IgnoreMACMismatch: true,
+	})
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to decrypt file: %v", err))
 		return

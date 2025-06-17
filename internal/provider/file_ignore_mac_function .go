@@ -15,29 +15,24 @@ import (
 	"github.com/nobbs/terraform-provider-sops/internal/provider/utils"
 )
 
-var sopsFileReturnAttrTypes = map[string]attr.Type{
-	"raw":  types.StringType,
-	"data": types.DynamicType,
+// Ensure that fileIgnoreMacFunction implements the Function interface.
+var _ function.Function = &fileIgnoreMacFunction{}
+
+type fileIgnoreMacFunction struct{}
+
+func NewFileIgnoreMacFunction() function.Function {
+	return &fileIgnoreMacFunction{}
 }
 
-// Ensure that fileFunction implements the Function interface.
-var _ function.Function = &fileFunction{}
-
-type fileFunction struct{}
-
-func NewFileFunction() function.Function {
-	return &fileFunction{}
+func (f *fileIgnoreMacFunction) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
+	resp.Name = "file_ignore_mac"
 }
 
-func (f *fileFunction) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
-	resp.Name = "file"
-}
-
-func (f *fileFunction) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
+func (f *fileIgnoreMacFunction) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary: "Reads and decrypts a sops encrypted file.",
+		Summary: "Reads and decrypts a sops encrypted file ignoring MAC mismatch.",
 		MarkdownDescription: strings.TrimSpace(dedent.Dedent(`
-			Reads and decrypts a [sops](https://getsops.io/) encrypted file. An optional format can be
+			Reads and decrypts a [sops](https://getsops.io/) encrypted file ignoring MAC mismatch. An optional format can be
 			provided to specify the format of the encrypted file. If not provided, we will try to infer
 			the format from the file extension. Supported formats are ` + utils.Code("yaml") + `, ` +
 			utils.Code("json") + `, ` + utils.Code("dotenv") + `, ` + utils.Code("ini") + `, and ` +
@@ -70,7 +65,7 @@ func (f *fileFunction) Definition(ctx context.Context, req function.DefinitionRe
 	}
 }
 
-func (f *fileFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
+func (f *fileIgnoreMacFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
 	var file string
 	var varargs []string
 
@@ -93,7 +88,9 @@ func (f *fileFunction) Run(ctx context.Context, req function.RunRequest, resp *f
 	}
 
 	// decrypt sops file
-	cleartext, err := utils.DecryptFile(file, format, utils.DecryptOptions{})
+	cleartext, err := utils.DecryptFile(file, format, utils.DecryptOptions{
+		IgnoreMACMismatch: true,
+	})
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to decrypt file: %v", err))
 		return

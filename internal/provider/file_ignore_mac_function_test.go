@@ -6,7 +6,6 @@ package provider
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/go-version"
@@ -17,17 +16,17 @@ import (
 )
 
 const (
-	fileFunctionConfig_raw_file                = "test/fixtures/raw.sops.txt"
-	fileFunctionConfig_basic_yaml_file         = "test/fixtures/basic.sops.yaml"
-	fileFunctionConfig_basic_json_file         = "test/fixtures/basic.sops.json"
-	fileFunctionConfig_complex_yaml_file       = "test/fixtures/complex.sops.yaml"
-	fileFunctionConfig_complex_json_file       = "test/fixtures/complex.sops.json"
-	fileFunctionConfig_sample_ini_file         = "test/fixtures/sample.sops.ini"
-	fileFunctionConfig_sample_env_file         = "test/fixtures/dot.sops.env"
-	fileFunctionConfig_basic_mac_mismatch_file = "test/fixtures/basic-mac-mismatch.sops.yaml"
+	fileIgnoreMacFunctionConfig_raw_file                = "test/fixtures/raw.sops.txt"
+	fileIgnoreMacFunctionConfig_basic_yaml_file         = "test/fixtures/basic.sops.yaml"
+	fileIgnoreMacFunctionConfig_basic_json_file         = "test/fixtures/basic.sops.json"
+	fileIgnoreMacFunctionConfig_complex_yaml_file       = "test/fixtures/complex.sops.yaml"
+	fileIgnoreMacFunctionConfig_complex_json_file       = "test/fixtures/complex.sops.json"
+	fileIgnoreMacFunctionConfig_sample_ini_file         = "test/fixtures/sample.sops.ini"
+	fileIgnoreMacFunctionConfig_sample_env_file         = "test/fixtures/dot.sops.env"
+	fileIgnoreMacFunctionConfig_basic_mac_mismatch_file = "test/fixtures/basic-mac-mismatch.sops.yaml"
 )
 
-func helperFileFunctionConfig(file string, format string) string {
+func helperFileIgnoreMacFunctionConfig(file string, format string) string {
 	if format != "" {
 		format = fmt.Sprintf(", %q", format)
 	}
@@ -35,20 +34,20 @@ func helperFileFunctionConfig(file string, format string) string {
 	return fmt.Sprintf(
 		`
 output "test" {
-	value = provider::sops::file("%s"%s)
+	value = provider::sops::file_ignore_mac("%s"%s)
 }
 `,
 		file, format,
 	)
 }
 
-func TestFileFunction_raw(t *testing.T) {
+func TestFileIgnoreMacFunction_raw(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_raw_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileIgnoreMacFunctionConfig_raw_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -57,7 +56,7 @@ func TestFileFunction_raw(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -68,7 +67,7 @@ func TestFileFunction_raw(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "binary"),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, "binary"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -82,13 +81,13 @@ func TestFileFunction_raw(t *testing.T) {
 	})
 }
 
-func TestFileFunction_basic_yaml(t *testing.T) {
+func TestFileIgnoreMacFunction_basic_yaml(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_basic_yaml_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileIgnoreMacFunctionConfig_basic_yaml_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -97,7 +96,7 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -113,7 +112,7 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "yaml"),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, "yaml"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -132,13 +131,13 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 	})
 }
 
-func TestFileFunction_basic_json(t *testing.T) {
+func TestFileIgnoreMacFunction_basic_json(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_basic_json_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileIgnoreMacFunctionConfig_basic_json_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -147,7 +146,7 @@ func TestFileFunction_basic_json(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -163,7 +162,7 @@ func TestFileFunction_basic_json(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "json"),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, "json"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -182,13 +181,13 @@ func TestFileFunction_basic_json(t *testing.T) {
 	})
 }
 
-func TestFileFunction_complex_yaml(t *testing.T) {
+func TestFileIgnoreMacFunction_complex_yaml(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_complex_yaml_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileIgnoreMacFunctionConfig_complex_yaml_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -197,7 +196,7 @@ func TestFileFunction_complex_yaml(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -234,97 +233,7 @@ func TestFileFunction_complex_yaml(t *testing.T) {
 			},
 
 			{
-				Config: helperFileFunctionConfig(fixture, "yaml"),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownOutputValue(
-						"test",
-						knownvalue.ObjectPartial(map[string]knownvalue.Check{
-							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"string_key":  knownvalue.StringExact("example string"),
-								"integer_key": knownvalue.Int64Exact(42),
-								"float_key":   knownvalue.Float64Exact(3.14),
-								"boolean_key": knownvalue.Bool(true),
-								"null_key":    knownvalue.Null(),
-								"list_key": knownvalue.ListExact([]knownvalue.Check{
-									knownvalue.StringExact("item1"),
-									knownvalue.StringExact("item2"),
-									knownvalue.Int64Exact(3),
-									knownvalue.Bool(false),
-									knownvalue.Null(),
-								}),
-								"object_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
-									"nested_string":  knownvalue.StringExact("nested example"),
-									"nested_integer": knownvalue.Int64Exact(100),
-									"nested_list": knownvalue.ListExact([]knownvalue.Check{
-										knownvalue.StringExact("nested item1"),
-										knownvalue.Int64Exact(200),
-									}),
-									"nested_object": knownvalue.ObjectExact(map[string]knownvalue.Check{
-										"deeper_string":  knownvalue.StringExact("deeper example"),
-										"deeper_boolean": knownvalue.Bool(false),
-									}),
-								}),
-							}),
-						}),
-					),
-				},
-			},
-		},
-	})
-}
-
-func TestFileFunction_complex_json(t *testing.T) {
-	wd, err := os.Getwd()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_complex_json_file)
-
-	resource.UnitTest(t, resource.TestCase{
-		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.RequireAbove(version.Must(version.NewVersion("1.8.0"))),
-		},
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: helperFileFunctionConfig(fixture, ""),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownOutputValue(
-						"test",
-						knownvalue.ObjectPartial(map[string]knownvalue.Check{
-							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"string_key":  knownvalue.StringExact("example string"),
-								"integer_key": knownvalue.Int64Exact(42),
-								"float_key":   knownvalue.Float64Exact(3.14),
-								"boolean_key": knownvalue.Bool(true),
-								"null_key":    knownvalue.Null(),
-								"list_key": knownvalue.ListExact([]knownvalue.Check{
-									knownvalue.StringExact("item1"),
-									knownvalue.StringExact("item2"),
-									knownvalue.Int64Exact(3),
-									knownvalue.Bool(false),
-									knownvalue.Null(),
-								}),
-								"object_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
-									"nested_string":  knownvalue.StringExact("nested example"),
-									"nested_integer": knownvalue.Int64Exact(100),
-									"nested_list": knownvalue.ListExact([]knownvalue.Check{
-										knownvalue.StringExact("nested item1"),
-										knownvalue.Int64Exact(200),
-									}),
-									"nested_object": knownvalue.ObjectExact(map[string]knownvalue.Check{
-										"deeper_string":  knownvalue.StringExact("deeper example"),
-										"deeper_boolean": knownvalue.Bool(false),
-									}),
-								}),
-							}),
-						}),
-					),
-				},
-			},
-			{
-				Config: helperFileFunctionConfig(fixture, "json"),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, "yaml"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -363,13 +272,13 @@ func TestFileFunction_complex_json(t *testing.T) {
 	})
 }
 
-func TestFileFunction_sample_ini(t *testing.T) {
+func TestFileIgnoreMacFunction_complex_json(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_sample_ini_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileIgnoreMacFunctionConfig_complex_json_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -378,7 +287,97 @@ func TestFileFunction_sample_ini(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, ""),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownOutputValue(
+						"test",
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"string_key":  knownvalue.StringExact("example string"),
+								"integer_key": knownvalue.Int64Exact(42),
+								"float_key":   knownvalue.Float64Exact(3.14),
+								"boolean_key": knownvalue.Bool(true),
+								"null_key":    knownvalue.Null(),
+								"list_key": knownvalue.ListExact([]knownvalue.Check{
+									knownvalue.StringExact("item1"),
+									knownvalue.StringExact("item2"),
+									knownvalue.Int64Exact(3),
+									knownvalue.Bool(false),
+									knownvalue.Null(),
+								}),
+								"object_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
+									"nested_string":  knownvalue.StringExact("nested example"),
+									"nested_integer": knownvalue.Int64Exact(100),
+									"nested_list": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.StringExact("nested item1"),
+										knownvalue.Int64Exact(200),
+									}),
+									"nested_object": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"deeper_string":  knownvalue.StringExact("deeper example"),
+										"deeper_boolean": knownvalue.Bool(false),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+			{
+				Config: helperFileIgnoreMacFunctionConfig(fixture, "json"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownOutputValue(
+						"test",
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"string_key":  knownvalue.StringExact("example string"),
+								"integer_key": knownvalue.Int64Exact(42),
+								"float_key":   knownvalue.Float64Exact(3.14),
+								"boolean_key": knownvalue.Bool(true),
+								"null_key":    knownvalue.Null(),
+								"list_key": knownvalue.ListExact([]knownvalue.Check{
+									knownvalue.StringExact("item1"),
+									knownvalue.StringExact("item2"),
+									knownvalue.Int64Exact(3),
+									knownvalue.Bool(false),
+									knownvalue.Null(),
+								}),
+								"object_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
+									"nested_string":  knownvalue.StringExact("nested example"),
+									"nested_integer": knownvalue.Int64Exact(100),
+									"nested_list": knownvalue.ListExact([]knownvalue.Check{
+										knownvalue.StringExact("nested item1"),
+										knownvalue.Int64Exact(200),
+									}),
+									"nested_object": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"deeper_string":  knownvalue.StringExact("deeper example"),
+										"deeper_boolean": knownvalue.Bool(false),
+									}),
+								}),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestFileIgnoreMacFunction_sample_ini(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileIgnoreMacFunctionConfig_sample_ini_file)
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.RequireAbove(version.Must(version.NewVersion("1.8.0"))),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: helperFileIgnoreMacFunctionConfig(fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -404,7 +403,7 @@ func TestFileFunction_sample_ini(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "ini"),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, "ini"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -433,13 +432,13 @@ func TestFileFunction_sample_ini(t *testing.T) {
 	})
 }
 
-func TestFileFunction_sample_env(t *testing.T) {
+func TestFileIgnoreMacFunction_sample_env(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_sample_env_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileIgnoreMacFunctionConfig_sample_env_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -448,7 +447,7 @@ func TestFileFunction_sample_env(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -463,7 +462,7 @@ func TestFileFunction_sample_env(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "dotenv"),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, "dotenv"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -481,13 +480,13 @@ func TestFileFunction_sample_env(t *testing.T) {
 	})
 }
 
-func TestFileFunction_basic_mac_mismatch(t *testing.T) {
+func TestFileIgnoreMacFunction_basic_mac_mismatch(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_basic_mac_mismatch_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fileIgnoreMacFunctionConfig_basic_mac_mismatch_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -496,16 +495,36 @@ func TestFileFunction_basic_mac_mismatch(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
-				ExpectError: regexp.MustCompile(
-					".*failed to verify data integrity.*",
-				),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, ""),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownOutputValue(
+						"test",
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"abc":      knownvalue.StringExact("xyz"),
+								"integers": knownvalue.Int64Exact(123),
+								"truthy":   knownvalue.Bool(true),
+								"floats":   knownvalue.Float64Exact(3.14e-10),
+							}),
+						}),
+					),
+				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "yaml"),
-				ExpectError: regexp.MustCompile(
-					".*failed to verify data integrity.*",
-				),
+				Config: helperFileIgnoreMacFunctionConfig(fixture, "yaml"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownOutputValue(
+						"test",
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"abc":      knownvalue.StringExact("xyz"),
+								"integers": knownvalue.Int64Exact(123),
+								"truthy":   knownvalue.Bool(true),
+								"floats":   knownvalue.Float64Exact(3.14e-10),
+							}),
+						}),
+					),
+				},
 			},
 		},
 	})
