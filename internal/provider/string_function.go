@@ -99,19 +99,7 @@ func (f *stringFunction) Run(ctx context.Context, req function.RunRequest, resp 
 		return
 	}
 
-	var json []byte
-
-	switch format {
-	case "yaml":
-		json, err = utils.ReadYAML(cleartext)
-	case "json":
-		json, err = utils.ReadJSON(cleartext)
-	case "ini":
-		json, err = utils.ReadINI(cleartext)
-	case "dotenv":
-		json, err = utils.ReadENV(cleartext)
-	}
-
+	json, err := utils.UnmarshalDecryptedData(cleartext, format)
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to unmarshal decrypted data: %v", err))
 		return

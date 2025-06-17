@@ -15,6 +15,11 @@ import (
 	"github.com/nobbs/terraform-provider-sops/internal/provider/utils"
 )
 
+var sopsFileIgnoreMacReturnAttrTypes = map[string]attr.Type{
+	"raw":  types.StringType,
+	"data": types.DynamicType,
+}
+
 // Ensure that fileIgnoreMacFunction implements the Function interface.
 var _ function.Function = &fileIgnoreMacFunction{}
 
@@ -60,7 +65,7 @@ func (f *fileIgnoreMacFunction) Definition(ctx context.Context, req function.Def
 		},
 
 		Return: function.ObjectReturn{
-			AttributeTypes: sopsFileReturnAttrTypes,
+			AttributeTypes: sopsFileIgnoreMacReturnAttrTypes,
 		},
 	}
 }
@@ -88,27 +93,13 @@ func (f *fileIgnoreMacFunction) Run(ctx context.Context, req function.RunRequest
 	}
 
 	// decrypt sops file
-	cleartext, err := utils.DecryptFile(file, format, utils.DecryptOptions{
-		IgnoreMACMismatch: true,
-	})
+	cleartext, err := utils.DecryptFile(file, format, utils.DecryptOptions{IgnoreMACMismatch: true})
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to decrypt file: %v", err))
 		return
 	}
 
-	var json []byte
-
-	switch format {
-	case "yaml":
-		json, err = utils.ReadYAML(cleartext)
-	case "json":
-		json, err = utils.ReadJSON(cleartext)
-	case "ini":
-		json, err = utils.ReadINI(cleartext)
-	case "dotenv":
-		json, err = utils.ReadENV(cleartext)
-	}
-
+	json, err := utils.UnmarshalDecryptedData(cleartext, format)
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to unmarshal decrypted data: %v", err))
 		return

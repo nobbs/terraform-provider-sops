@@ -6,6 +6,7 @@ package provider
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/go-version"
@@ -15,38 +16,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
 
-const (
-	stringIgnoreMacFunctionConfig_raw_file          = "test/fixtures/raw.sops.txt"
-	stringIgnoreMacFunctionConfig_basic_yaml_file   = "test/fixtures/basic.sops.yaml"
-	stringIgnoreMacFunctionConfig_basic_json_file   = "test/fixtures/basic.sops.json"
-	stringIgnoreMacFunctionConfig_complex_yaml_file = "test/fixtures/complex.sops.yaml"
-	stringIgnoreMacFunctionConfig_complex_json_file = "test/fixtures/complex.sops.json"
-	stringIgnoreMacFunctionConfig_sample_ini_file   = "test/fixtures/sample.sops.ini"
-	stringIgnoreMacFunctionConfig_sample_env_file   = "test/fixtures/dot.sops.env"
-)
-
-func helperStringIgnoreMacFunctionConfig(file string, format string) string {
-	if format != "" {
-		format = fmt.Sprintf(", %q", format)
-	}
-
-	return fmt.Sprintf(
-		`
-output "test" {
-	value = provider::sops::string_ignore_mac(file("%s")%s)
-}
-`,
-		file, format,
-	)
-}
-
 func TestStringIgnoreMacFunction_raw(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, stringIgnoreMacFunctionConfig_raw_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_raw_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -55,7 +31,7 @@ func TestStringIgnoreMacFunction_raw(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperStringIgnoreMacFunctionConfig(fixture, "binary"),
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "binary"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -66,7 +42,7 @@ func TestStringIgnoreMacFunction_raw(t *testing.T) {
 				},
 			},
 			{
-				Config: helperStringIgnoreMacFunctionConfig(fixture, "binary"),
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "binary"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -86,7 +62,7 @@ func TestStringIgnoreMacFunction_basic_yaml(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, stringIgnoreMacFunctionConfig_basic_yaml_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_basic_yaml_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -95,7 +71,7 @@ func TestStringIgnoreMacFunction_basic_yaml(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperStringIgnoreMacFunctionConfig(fixture, "yaml"),
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "yaml"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -120,7 +96,7 @@ func TestStringIgnoreMacFunction_basic_json(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, stringIgnoreMacFunctionConfig_basic_json_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_basic_json_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -129,7 +105,7 @@ func TestStringIgnoreMacFunction_basic_json(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperStringIgnoreMacFunctionConfig(fixture, "json"),
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "json"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -154,7 +130,7 @@ func TestStringIgnoreMacFunction_complex_yaml(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, stringIgnoreMacFunctionConfig_complex_yaml_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_complex_yaml_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -163,7 +139,7 @@ func TestStringIgnoreMacFunction_complex_yaml(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperStringIgnoreMacFunctionConfig(fixture, "yaml"),
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "yaml"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -208,7 +184,7 @@ func TestStringIgnoreMacFunction_complex_json(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, stringIgnoreMacFunctionConfig_complex_json_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_complex_json_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -217,7 +193,7 @@ func TestStringIgnoreMacFunction_complex_json(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperStringIgnoreMacFunctionConfig(fixture, "json"),
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "json"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -262,7 +238,7 @@ func TestStringIgnoreMacFunction_sample_ini(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, stringIgnoreMacFunctionConfig_sample_ini_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_sample_ini_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -271,7 +247,7 @@ func TestStringIgnoreMacFunction_sample_ini(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperStringIgnoreMacFunctionConfig(fixture, "ini"),
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "ini"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -306,7 +282,7 @@ func TestStringIgnoreMacFunction_sample_env(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, stringIgnoreMacFunctionConfig_sample_env_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_sample_env_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -315,7 +291,7 @@ func TestStringIgnoreMacFunction_sample_env(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperStringIgnoreMacFunctionConfig(fixture, "dotenv"),
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "dotenv"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -328,6 +304,63 @@ func TestStringIgnoreMacFunction_sample_env(t *testing.T) {
 						}),
 					),
 				},
+			},
+		},
+	})
+}
+
+func TestStringIgnoreMacFunction_basic_mac_mismatch(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_basic_mac_mismatch_file)
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.RequireAbove(version.Must(version.NewVersion("1.8.0"))),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+
+			{
+				Config: testHelperFunctionConfig("string_ignore_mac", fixture, "yaml"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownOutputValue(
+						"test",
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"abc":      knownvalue.StringExact("xyz"),
+								"integers": knownvalue.Int64Exact(123),
+								"truthy":   knownvalue.Bool(true),
+								"floats":   knownvalue.Float64Exact(3.14e-10),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestStringIgnoreMacFunction_invalid_format(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_basic_yaml_file)
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.RequireAbove(version.Must(version.NewVersion("1.8.0"))),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testHelperFunctionConfig("string_ignore_mac", fixture, "foobar"),
+				ExpectError: regexp.MustCompile("invalid format:.*"),
 			},
 		},
 	})

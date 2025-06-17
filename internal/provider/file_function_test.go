@@ -16,39 +16,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
 
-const (
-	fileFunctionConfig_raw_file                = "test/fixtures/raw.sops.txt"
-	fileFunctionConfig_basic_yaml_file         = "test/fixtures/basic.sops.yaml"
-	fileFunctionConfig_basic_json_file         = "test/fixtures/basic.sops.json"
-	fileFunctionConfig_complex_yaml_file       = "test/fixtures/complex.sops.yaml"
-	fileFunctionConfig_complex_json_file       = "test/fixtures/complex.sops.json"
-	fileFunctionConfig_sample_ini_file         = "test/fixtures/sample.sops.ini"
-	fileFunctionConfig_sample_env_file         = "test/fixtures/dot.sops.env"
-	fileFunctionConfig_basic_mac_mismatch_file = "test/fixtures/basic-mac-mismatch.sops.yaml"
-)
-
-func helperFileFunctionConfig(file string, format string) string {
-	if format != "" {
-		format = fmt.Sprintf(", %q", format)
-	}
-
-	return fmt.Sprintf(
-		`
-output "test" {
-	value = provider::sops::file("%s"%s)
-}
-`,
-		file, format,
-	)
-}
-
 func TestFileFunction_raw(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_raw_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_raw_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -57,7 +31,7 @@ func TestFileFunction_raw(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: testHelperFunctionConfig("file", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -68,7 +42,7 @@ func TestFileFunction_raw(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "binary"),
+				Config: testHelperFunctionConfig("file", fixture, "binary"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -88,7 +62,7 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_basic_yaml_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_basic_yaml_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -97,7 +71,7 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: testHelperFunctionConfig("file", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -113,7 +87,7 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "yaml"),
+				Config: testHelperFunctionConfig("file", fixture, "yaml"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -138,7 +112,7 @@ func TestFileFunction_basic_json(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_basic_json_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_basic_json_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -147,7 +121,7 @@ func TestFileFunction_basic_json(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: testHelperFunctionConfig("file", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -163,7 +137,7 @@ func TestFileFunction_basic_json(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "json"),
+				Config: testHelperFunctionConfig("file", fixture, "json"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -188,7 +162,7 @@ func TestFileFunction_complex_yaml(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_complex_yaml_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_complex_yaml_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -197,7 +171,7 @@ func TestFileFunction_complex_yaml(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: testHelperFunctionConfig("file", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -234,7 +208,7 @@ func TestFileFunction_complex_yaml(t *testing.T) {
 			},
 
 			{
-				Config: helperFileFunctionConfig(fixture, "yaml"),
+				Config: testHelperFunctionConfig("file", fixture, "yaml"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -279,7 +253,7 @@ func TestFileFunction_complex_json(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_complex_json_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_complex_json_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -288,7 +262,7 @@ func TestFileFunction_complex_json(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: testHelperFunctionConfig("file", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -324,7 +298,7 @@ func TestFileFunction_complex_json(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "json"),
+				Config: testHelperFunctionConfig("file", fixture, "json"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -369,7 +343,7 @@ func TestFileFunction_sample_ini(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_sample_ini_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_sample_ini_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -378,7 +352,7 @@ func TestFileFunction_sample_ini(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: testHelperFunctionConfig("file", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -404,7 +378,7 @@ func TestFileFunction_sample_ini(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "ini"),
+				Config: testHelperFunctionConfig("file", fixture, "ini"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -439,7 +413,7 @@ func TestFileFunction_sample_env(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_sample_env_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_sample_env_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -448,7 +422,7 @@ func TestFileFunction_sample_env(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: testHelperFunctionConfig("file", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -463,7 +437,7 @@ func TestFileFunction_sample_env(t *testing.T) {
 				},
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "dotenv"),
+				Config: testHelperFunctionConfig("file", fixture, "dotenv"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -487,7 +461,7 @@ func TestFileFunction_basic_mac_mismatch(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fixture := fmt.Sprintf("%s/../../%s", wd, fileFunctionConfig_basic_mac_mismatch_file)
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_basic_mac_mismatch_file)
 
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
@@ -496,16 +470,38 @@ func TestFileFunction_basic_mac_mismatch(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: helperFileFunctionConfig(fixture, ""),
+				Config: testHelperFunctionConfig("file", fixture, ""),
 				ExpectError: regexp.MustCompile(
 					".*failed to verify data integrity.*",
 				),
 			},
 			{
-				Config: helperFileFunctionConfig(fixture, "yaml"),
+				Config: testHelperFunctionConfig("file", fixture, "yaml"),
 				ExpectError: regexp.MustCompile(
 					".*failed to verify data integrity.*",
 				),
+			},
+		},
+	})
+}
+
+func TestFileFunction_invalid_format(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_basic_yaml_file)
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.RequireAbove(version.Must(version.NewVersion("1.8.0"))),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testHelperFunctionConfig("file", fixture, "foobar"),
+				ExpectError: regexp.MustCompile("invalid format:.*"),
 			},
 		},
 	})
