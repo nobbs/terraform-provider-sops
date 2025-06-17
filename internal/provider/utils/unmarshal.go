@@ -1,3 +1,6 @@
+// Copyright (c) Alexej Disterhoft <alexej@disterhoft.de>
+// SPDX-License-Identifier: MPL-2.0
+
 package utils
 
 import "fmt"
