@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
 
-func TestFileFunction_raw(t *testing.T) {
+func TestFileIgnoreMacFunction_raw(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func TestFileFunction_raw(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testHelperFunctionConfig("file", fixture, ""),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -42,7 +42,7 @@ func TestFileFunction_raw(t *testing.T) {
 				},
 			},
 			{
-				Config: testHelperFunctionConfig("file", fixture, "binary"),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, "binary"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -56,7 +56,7 @@ func TestFileFunction_raw(t *testing.T) {
 	})
 }
 
-func TestFileFunction_basic_yaml(t *testing.T) {
+func TestFileIgnoreMacFunction_basic_yaml(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -71,7 +71,7 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testHelperFunctionConfig("file", fixture, ""),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -87,7 +87,7 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 				},
 			},
 			{
-				Config: testHelperFunctionConfig("file", fixture, "yaml"),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, "yaml"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -106,7 +106,7 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 	})
 }
 
-func TestFileFunction_basic_json(t *testing.T) {
+func TestFileIgnoreMacFunction_basic_json(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -121,7 +121,7 @@ func TestFileFunction_basic_json(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testHelperFunctionConfig("file", fixture, ""),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -137,7 +137,7 @@ func TestFileFunction_basic_json(t *testing.T) {
 				},
 			},
 			{
-				Config: testHelperFunctionConfig("file", fixture, "json"),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, "json"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -156,7 +156,7 @@ func TestFileFunction_basic_json(t *testing.T) {
 	})
 }
 
-func TestFileFunction_complex_yaml(t *testing.T) {
+func TestFileIgnoreMacFunction_complex_yaml(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -171,7 +171,7 @@ func TestFileFunction_complex_yaml(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testHelperFunctionConfig("file", fixture, ""),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -208,7 +208,7 @@ func TestFileFunction_complex_yaml(t *testing.T) {
 			},
 
 			{
-				Config: testHelperFunctionConfig("file", fixture, "yaml"),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, "yaml"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -247,7 +247,7 @@ func TestFileFunction_complex_yaml(t *testing.T) {
 	})
 }
 
-func TestFileFunction_complex_json(t *testing.T) {
+func TestFileIgnoreMacFunction_complex_json(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -262,7 +262,7 @@ func TestFileFunction_complex_json(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testHelperFunctionConfig("file", fixture, ""),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -298,7 +298,7 @@ func TestFileFunction_complex_json(t *testing.T) {
 				},
 			},
 			{
-				Config: testHelperFunctionConfig("file", fixture, "json"),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, "json"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -337,7 +337,7 @@ func TestFileFunction_complex_json(t *testing.T) {
 	})
 }
 
-func TestFileFunction_sample_ini(t *testing.T) {
+func TestFileIgnoreMacFunction_sample_ini(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -352,7 +352,7 @@ func TestFileFunction_sample_ini(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testHelperFunctionConfig("file", fixture, ""),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -378,7 +378,7 @@ func TestFileFunction_sample_ini(t *testing.T) {
 				},
 			},
 			{
-				Config: testHelperFunctionConfig("file", fixture, "ini"),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, "ini"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -407,7 +407,7 @@ func TestFileFunction_sample_ini(t *testing.T) {
 	})
 }
 
-func TestFileFunction_sample_env(t *testing.T) {
+func TestFileIgnoreMacFunction_sample_env(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -422,7 +422,7 @@ func TestFileFunction_sample_env(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testHelperFunctionConfig("file", fixture, ""),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, ""),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -437,7 +437,7 @@ func TestFileFunction_sample_env(t *testing.T) {
 				},
 			},
 			{
-				Config: testHelperFunctionConfig("file", fixture, "dotenv"),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, "dotenv"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValue(
 						"test",
@@ -455,7 +455,7 @@ func TestFileFunction_sample_env(t *testing.T) {
 	})
 }
 
-func TestFileFunction_basic_mac_mismatch(t *testing.T) {
+func TestFileIgnoreMacFunction_basic_mac_mismatch(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -470,22 +470,42 @@ func TestFileFunction_basic_mac_mismatch(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testHelperFunctionConfig("file", fixture, ""),
-				ExpectError: regexp.MustCompile(
-					".*failed to verify data integrity.*",
-				),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, ""),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownOutputValue(
+						"test",
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"abc":      knownvalue.StringExact("xyz"),
+								"integers": knownvalue.Int64Exact(123),
+								"truthy":   knownvalue.Bool(true),
+								"floats":   knownvalue.Float64Exact(3.14e-10),
+							}),
+						}),
+					),
+				},
 			},
 			{
-				Config: testHelperFunctionConfig("file", fixture, "yaml"),
-				ExpectError: regexp.MustCompile(
-					".*failed to verify data integrity.*",
-				),
+				Config: testHelperFunctionConfig("file_ignore_mac", fixture, "yaml"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownOutputValue(
+						"test",
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"abc":      knownvalue.StringExact("xyz"),
+								"integers": knownvalue.Int64Exact(123),
+								"truthy":   knownvalue.Bool(true),
+								"floats":   knownvalue.Float64Exact(3.14e-10),
+							}),
+						}),
+					),
+				},
 			},
 		},
 	})
 }
 
-func TestFileFunction_invalid_format(t *testing.T) {
+func TestFileIgnoreMacFunction_invalid_format(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -500,7 +520,7 @@ func TestFileFunction_invalid_format(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config:      testHelperFunctionConfig("file", fixture, "foobar"),
+				Config:      testHelperFunctionConfig("file_ignore_mac", fixture, "foobar"),
 				ExpectError: regexp.MustCompile("invalid format:.*"),
 			},
 		},

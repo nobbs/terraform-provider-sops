@@ -15,28 +15,28 @@ import (
 	"github.com/nobbs/terraform-provider-sops/internal/provider/utils"
 )
 
-var sopsStringReturnAttrTypes = map[string]attr.Type{
+var sopsStringIgnoreMacReturnAttrTypes = map[string]attr.Type{
 	"raw":  types.StringType,
 	"data": types.DynamicType,
 }
 
-var _ function.Function = &stringFunction{}
+var _ function.Function = &stringIgnoreMacFunction{}
 
-type stringFunction struct{}
+type stringIgnoreMacFunction struct{}
 
-func NewStringFunction() function.Function {
-	return &stringFunction{}
+func NewStringIgnoreMacFunction() function.Function {
+	return &stringIgnoreMacFunction{}
 }
 
-func (f *stringFunction) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
-	resp.Name = "string"
+func (f *stringIgnoreMacFunction) Metadata(ctx context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
+	resp.Name = "string_ignore_mac"
 }
 
-func (f *stringFunction) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
+func (f *stringIgnoreMacFunction) Definition(ctx context.Context, req function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary: "Reads and decrypts a sops encrypted string.",
+		Summary: "Reads and decrypts a sops encrypted string ignoring MAC mismatch.",
 		MarkdownDescription: strings.TrimSpace(dedent.Dedent(`
-			Reads and decrypts a [sops](https://getsops.io/) encrypted string.
+			Reads and decrypts a [sops](https://getsops.io/) encrypted string ignoring any MAC mismatch errors.
 			An optional format can be provided to specify the format of the encrypted string. If not
 			provided, structured data will not be automatically converted to an object. Supported formats
 			are ` + utils.Code("yaml") + `, ` + utils.Code("json") + `, ` + utils.Code("dotenv") + `, ` +
@@ -64,12 +64,12 @@ func (f *stringFunction) Definition(ctx context.Context, req function.Definition
 		},
 
 		Return: function.ObjectReturn{
-			AttributeTypes: sopsStringReturnAttrTypes,
+			AttributeTypes: sopsStringIgnoreMacReturnAttrTypes,
 		},
 	}
 }
 
-func (f *stringFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
+func (f *stringIgnoreMacFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
 	var data string
 	var varargs []string
 
@@ -93,7 +93,7 @@ func (f *stringFunction) Run(ctx context.Context, req function.RunRequest, resp 
 
 	// decrypt sops file
 	databytes := []byte(data)
-	cleartext, err := utils.DecryptData(databytes, format, utils.DecryptOptions{})
+	cleartext, err := utils.DecryptData(databytes, format, utils.DecryptOptions{IgnoreMACMismatch: true})
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to decrypt file: %v", err))
 		return
@@ -112,7 +112,7 @@ func (f *stringFunction) Run(ctx context.Context, req function.RunRequest, resp 
 	}
 
 	result, diags := types.ObjectValue(
-		sopsFileReturnAttrTypes,
+		sopsStringIgnoreMacReturnAttrTypes,
 		map[string]attr.Value{
 			"raw":  types.StringValue(string(cleartext)),
 			"data": dynamicData,

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/getsops/sops/v3/decrypt"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -94,25 +93,13 @@ func (f *fileFunction) Run(ctx context.Context, req function.RunRequest, resp *f
 	}
 
 	// decrypt sops file
-	cleartext, err := decrypt.File(file, format)
+	cleartext, err := utils.DecryptFile(file, format, utils.DecryptOptions{})
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to decrypt file: %v", err))
 		return
 	}
 
-	var json []byte
-
-	switch format {
-	case "yaml":
-		json, err = utils.ReadYAML(cleartext)
-	case "json":
-		json, err = utils.ReadJSON(cleartext)
-	case "ini":
-		json, err = utils.ReadINI(cleartext)
-	case "dotenv":
-		json, err = utils.ReadENV(cleartext)
-	}
-
+	json, err := utils.UnmarshalDecryptedData(cleartext, format)
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("failed to unmarshal decrypted data: %v", err))
 		return
