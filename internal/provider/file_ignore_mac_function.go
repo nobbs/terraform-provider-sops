@@ -112,7 +112,7 @@ func (f *fileIgnoreMacFunction) Run(ctx context.Context, req function.RunRequest
 	}
 
 	result, diags := types.ObjectValue(
-		sopsFileReturnAttrTypes,
+		sopsFileIgnoreMacReturnAttrTypes,
 		map[string]attr.Value{
 			"raw":  types.StringValue(string(cleartext)),
 			"data": dynamicData,
