@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.3.0](https://github.com/nobbs/terraform-provider-sops/compare/v0.2.1...v0.3.0) (2025-06-17)
+
+
+### Features
+
+* implement decrypt functions that ignore MAC mismatches ([#32](https://github.com/nobbs/terraform-provider-sops/issues/32)) ([fc5352f](https://github.com/nobbs/terraform-provider-sops/commit/fc5352f2b93c180a79f86963ebce8d3c630e5612))
+
+
+### Bug Fixes
+
+* **deps:** update dependencies ([ff115d4](https://github.com/nobbs/terraform-provider-sops/commit/ff115d44b4750e250ac0730e87036bc1f43bd9bd))
+
+
+### Miscellaneous Chores
+
+* **deps:** bump github.com/cli/go-gh/v2 in /tools ([#29](https://github.com/nobbs/terraform-provider-sops/issues/29)) ([2e7c5de](https://github.com/nobbs/terraform-provider-sops/commit/2e7c5deb24899797f52639ad28d16b2222d9e1ba))
+* **deps:** bump github.com/hashicorp/terraform-plugin-go ([#24](https://github.com/nobbs/terraform-provider-sops/issues/24)) ([eba27ac](https://github.com/nobbs/terraform-provider-sops/commit/eba27ac066e651aec98e0b9a9d2b755d6136d6f4))
+* **deps:** bump github.com/hashicorp/terraform-plugin-testing ([#25](https://github.com/nobbs/terraform-provider-sops/issues/25)) ([0db9926](https://github.com/nobbs/terraform-provider-sops/commit/0db9926fc970d8784f766754189e4b6b16e115f5))
+* **deps:** bump github.com/hashicorp/terraform-plugin-testing ([#30](https://github.com/nobbs/terraform-provider-sops/issues/30)) ([4ffa0f6](https://github.com/nobbs/terraform-provider-sops/commit/4ffa0f6c64b106ec38eec3dbef0eb22a451e2f7a))
+
+
+### Continuous Integration
+
+* **deps:** add dependabot auto merge workflow ([2e63e73](https://github.com/nobbs/terraform-provider-sops/commit/2e63e73eaf9815f1a4b992b5759f003d0f73eaf7))
+* **deps:** change Dependabot auto-merge strategy to squash ([c0e32df](https://github.com/nobbs/terraform-provider-sops/commit/c0e32df7b538641a729275054e15a5218b29803d))
+* **deps:** fix dependabot auto merge workflow ([#28](https://github.com/nobbs/terraform-provider-sops/issues/28)) ([d9496cd](https://github.com/nobbs/terraform-provider-sops/commit/d9496cd7b490b18f672038f20856a90145612b17))
+
 ## [0.2.1](https://github.com/nobbs/terraform-provider-sops/compare/v0.2.0...v0.2.1) (2025-05-21)
 
 
