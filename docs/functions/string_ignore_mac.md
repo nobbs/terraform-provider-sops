@@ -28,7 +28,7 @@ data "http" "basic-yaml-mac-mismatch" {
 }
 
 output "basic-yaml-mac-mismatch" {
-  value = provider::sops::string(data.http.basic-yaml-mac-mismatch.response_body)
+  value = provider::sops::string_ignore_mac(data.http.basic-yaml-mac-mismatch.response_body, "yaml")
 }
 
 # basic-yaml-mac-mismatch = {
