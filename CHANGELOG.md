@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/nobbs/terraform-provider-sops/compare/v0.3.0...v0.3.1) (2025-06-18)
+
+
+### Documentation
+
+* fix example for string_ignore_mac function ([b5d1a4e](https://github.com/nobbs/terraform-provider-sops/commit/b5d1a4e0ad15d4f3c4ed82ca0b5c3565fd91dcad))
+
 ## [0.3.0](https://github.com/nobbs/terraform-provider-sops/compare/v0.2.1...v0.3.0) (2025-06-17)
 
 
