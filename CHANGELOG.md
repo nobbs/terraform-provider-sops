@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.1](https://github.com/nobbs/terraform-provider-sops/compare/v0.3.0...v0.3.1) (2025-09-22)
+
+
+### Documentation
+
+* fix example for string_ignore_mac function ([b5d1a4e](https://github.com/nobbs/terraform-provider-sops/commit/b5d1a4e0ad15d4f3c4ed82ca0b5c3565fd91dcad))
+
+
+### Miscellaneous Chores
+
+* **deps:** bump actions/checkout from 4 to 5 ([#36](https://github.com/nobbs/terraform-provider-sops/issues/36)) ([5f2cefc](https://github.com/nobbs/terraform-provider-sops/commit/5f2cefcc76ece7440d5fefa84f7bb6d917f33c32))
+* **deps:** bump actions/setup-go from 5.5.0 to 6.0.0 ([#39](https://github.com/nobbs/terraform-provider-sops/issues/39)) ([c48bb75](https://github.com/nobbs/terraform-provider-sops/commit/c48bb751ae4340fd554af6c12cc522c5f6802bac))
+* **deps:** bump github.com/hashicorp/terraform-plugin-framework ([#35](https://github.com/nobbs/terraform-provider-sops/issues/35)) ([b2a9fe8](https://github.com/nobbs/terraform-provider-sops/commit/b2a9fe8c08ef25b1ae49d5060fe9e8f985b7bb40))
+* **deps:** bump github.com/hashicorp/terraform-plugin-framework ([#40](https://github.com/nobbs/terraform-provider-sops/issues/40)) ([26289bb](https://github.com/nobbs/terraform-provider-sops/commit/26289bbd45ecb8b0241172dc1c7ec50760ea03b0))
+* **deps:** bump github.com/hashicorp/terraform-plugin-testing ([#38](https://github.com/nobbs/terraform-provider-sops/issues/38)) ([ac32567](https://github.com/nobbs/terraform-provider-sops/commit/ac325677db264e0d7fe112788896138ae3384d0b))
+* **deps:** bump goreleaser/goreleaser-action from 6.3.0 to 6.4.0 ([#37](https://github.com/nobbs/terraform-provider-sops/issues/37)) ([72bb6a9](https://github.com/nobbs/terraform-provider-sops/commit/72bb6a910b0f039295e3c0d0d370b9ce994d083c))
+
+
+### Continuous Integration
+
+* **deps:** pin actions/checkout and release-please-action ([c0b8897](https://github.com/nobbs/terraform-provider-sops/commit/c0b8897c4a36b629b0b7780a9bb96fee0ea04230))
+* **test:** replace 1.8.* with 1.13.* in Terraform version matrix ([e296e24](https://github.com/nobbs/terraform-provider-sops/commit/e296e24dea7195be24f8dd48437035bdd988def5))
+
 ## [0.3.0](https://github.com/nobbs/terraform-provider-sops/compare/v0.2.1...v0.3.0) (2025-06-17)
 
 
