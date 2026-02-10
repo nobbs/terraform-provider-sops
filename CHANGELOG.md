@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.3.2](https://github.com/nobbs/terraform-provider-sops/compare/v0.3.1...v0.3.2) (2026-02-10)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump actions/checkout from 5.0.0 to 5.0.1 ([#46](https://github.com/nobbs/terraform-provider-sops/issues/46)) ([b7c080e](https://github.com/nobbs/terraform-provider-sops/commit/b7c080e986a35d64ad9c4d6a06f580f142e26251))
+* **deps:** bump actions/checkout from 5.0.1 to 6.0.0 ([#49](https://github.com/nobbs/terraform-provider-sops/issues/49)) ([7dda1ab](https://github.com/nobbs/terraform-provider-sops/commit/7dda1ab8d2a7ff7d9ef1bed460028e70d54822d2))
+* **deps:** bump actions/checkout from 6.0.0 to 6.0.2 ([#62](https://github.com/nobbs/terraform-provider-sops/issues/62)) ([c8abaa5](https://github.com/nobbs/terraform-provider-sops/commit/c8abaa5d349ceb8b109aa10b9d97d678d81f54eb))
+* **deps:** bump actions/create-github-app-token from 2.1.4 to 2.2.0 ([#52](https://github.com/nobbs/terraform-provider-sops/issues/52)) ([bb9fcc0](https://github.com/nobbs/terraform-provider-sops/commit/bb9fcc009ce01eecc9ffccfc6b13f08784488175))
+* **deps:** bump actions/create-github-app-token from 2.2.0 to 2.2.1 ([#58](https://github.com/nobbs/terraform-provider-sops/issues/58)) ([958e247](https://github.com/nobbs/terraform-provider-sops/commit/958e2474604ed00316ec3f5e1c9a1c02e4872828))
+* **deps:** bump actions/setup-go from 6.0.0 to 6.1.0 ([#50](https://github.com/nobbs/terraform-provider-sops/issues/50)) ([75bb7be](https://github.com/nobbs/terraform-provider-sops/commit/75bb7be43b4b1aa3aec70459beba417b735f8a8e))
+* **deps:** bump actions/setup-go from 6.1.0 to 6.2.0 ([#60](https://github.com/nobbs/terraform-provider-sops/issues/60)) ([7153aa2](https://github.com/nobbs/terraform-provider-sops/commit/7153aa22515dd4619330b6e319120b67e7a9d7f0))
+* **deps:** bump dessant/lock-threads from 5.0.1 to 6.0.0 ([#59](https://github.com/nobbs/terraform-provider-sops/issues/59)) ([2ae5d5a](https://github.com/nobbs/terraform-provider-sops/commit/2ae5d5a74ad3de32afb98e40f89f14686210aac7))
+* **deps:** bump github.com/getsops/sops/v3 from 3.10.2 to 3.11.0 ([#42](https://github.com/nobbs/terraform-provider-sops/issues/42)) ([996fd77](https://github.com/nobbs/terraform-provider-sops/commit/996fd770baf897f13de9a0ededf9743be3525065))
+* **deps:** bump github.com/hashicorp/go-version from 1.7.0 to 1.8.0 ([#53](https://github.com/nobbs/terraform-provider-sops/issues/53)) ([ed74a10](https://github.com/nobbs/terraform-provider-sops/commit/ed74a10b3465508913caf2f6d5dbaa8624c11c1c))
+* **deps:** bump github.com/hashicorp/terraform-plugin-framework ([#43](https://github.com/nobbs/terraform-provider-sops/issues/43)) ([165e270](https://github.com/nobbs/terraform-provider-sops/commit/165e270fc2b827df1ac44e7219cf02c8f421e463))
+* **deps:** bump github.com/hashicorp/terraform-plugin-framework ([#56](https://github.com/nobbs/terraform-provider-sops/issues/56)) ([364df8a](https://github.com/nobbs/terraform-provider-sops/commit/364df8ad5e7660b14ffb3952b44acaed566c6feb))
+* **deps:** bump github.com/hashicorp/terraform-plugin-testing ([#57](https://github.com/nobbs/terraform-provider-sops/issues/57)) ([15134fe](https://github.com/nobbs/terraform-provider-sops/commit/15134fee3763dffb3f1e2e77810e2d416fe86bcb))
+* **deps:** bump golang.org/x/crypto ([#47](https://github.com/nobbs/terraform-provider-sops/issues/47)) ([d66c10d](https://github.com/nobbs/terraform-provider-sops/commit/d66c10d771e12da35b16da83be1606d740a34ba7))
+* **deps:** bump golang.org/x/crypto ([#48](https://github.com/nobbs/terraform-provider-sops/issues/48)) ([112a451](https://github.com/nobbs/terraform-provider-sops/commit/112a451f52a8638e814924e907415e09d5b19fa1))
+* **deps:** bump golangci/golangci-lint-action from 8.0.0 to 9.0.0 ([#45](https://github.com/nobbs/terraform-provider-sops/issues/45)) ([9c5d4f8](https://github.com/nobbs/terraform-provider-sops/commit/9c5d4f8b4753d31eba14b916fe38a41eee3280ad))
+* **deps:** bump golangci/golangci-lint-action from 9.0.0 to 9.1.0 ([#51](https://github.com/nobbs/terraform-provider-sops/issues/51)) ([70fe96a](https://github.com/nobbs/terraform-provider-sops/commit/70fe96a9be4b36f6c6be89d973e9a615b6808421))
+* **deps:** bump golangci/golangci-lint-action from 9.1.0 to 9.2.0 ([#55](https://github.com/nobbs/terraform-provider-sops/issues/55)) ([5a0cbb8](https://github.com/nobbs/terraform-provider-sops/commit/5a0cbb879121abad6d9f689fa02b468162d9264d))
+* **deps:** bump googleapis/release-please-action from 4.3.0 to 4.4.0 ([#44](https://github.com/nobbs/terraform-provider-sops/issues/44)) ([4be958a](https://github.com/nobbs/terraform-provider-sops/commit/4be958ab3e004a696d9eba467158d711024d3a2b))
+* **deps:** update Go to 1.25 and upgrade all dependencies ([#63](https://github.com/nobbs/terraform-provider-sops/issues/63)) ([db6c7e9](https://github.com/nobbs/terraform-provider-sops/commit/db6c7e9ed8b5080ea603eba0616f069e3f83da9f))
+
 ## [0.3.1](https://github.com/nobbs/terraform-provider-sops/compare/v0.3.0...v0.3.1) (2025-09-22)
 
 
