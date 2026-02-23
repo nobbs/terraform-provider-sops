@@ -3,7 +3,7 @@ module github.com/nobbs/terraform-provider-sops
 go 1.25
 
 require (
-	github.com/getsops/sops/v3 v3.12.0
+	github.com/getsops/sops/v3 v3.12.1
 	github.com/hashicorp/go-version v1.8.0
 	github.com/hashicorp/terraform-plugin-framework v1.17.0
 	github.com/hashicorp/terraform-plugin-go v0.29.0
