@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/getsops/sops/v3 v3.12.1
 	github.com/hashicorp/go-version v1.8.0
-	github.com/hashicorp/terraform-plugin-framework v1.17.0
+	github.com/hashicorp/terraform-plugin-framework v1.18.0
 	github.com/hashicorp/terraform-plugin-go v0.30.0
 	github.com/hashicorp/terraform-plugin-testing v1.14.0
 	github.com/joho/godotenv v1.5.1
