@@ -10,6 +10,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// terraformProtocolNumberPrecision intentionally remains independent of the
+// production constant so this test detects drift from Terraform's precision.
+const terraformProtocolNumberPrecision = 512
+
 func TestJSONToDynamicImpliedPreservesNumberPrecision(t *testing.T) {
 	t.Parallel()
 
@@ -59,7 +63,12 @@ func TestJSONToDynamicImpliedPreservesNumberPrecision(t *testing.T) {
 				t.Fatalf("number attribute type = %T, want types.Number", objectValue.Attributes()["number"])
 			}
 
-			expected, _, err := big.ParseFloat(test.number, 10, 512, big.ToNearestEven)
+			expected, _, err := big.ParseFloat(
+				test.number,
+				10,
+				terraformProtocolNumberPrecision,
+				big.ToNearestEven,
+			)
 			if err != nil {
 				t.Fatalf("big.ParseFloat() error = %v", err)
 			}
