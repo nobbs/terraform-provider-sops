@@ -14,10 +14,12 @@ import (
 
 const nullStr = "null"
 
+const terraformNumberPrecision = 512
+
 // JSONToDynamicImplied is similar to FromJSON, while it is for typeless case.
 // In which case, the following type conversion rules are applied (Go -> TF):
 // - bool: bool
-// - float64: number
+// - json.Number: number
 // - string: string
 // - []interface{}: tuple
 // - map[string]interface{}: object
@@ -93,16 +95,21 @@ func attrValueFromJSONImplied(b []byte) (attr.Type, attr.Value, error) {
 	}
 
 	// Primitives
-	var v any
-	if err := json.Unmarshal(b, &v); err != nil {
+	v, err := decodeJSONPreservingNumbers(b)
+	if err != nil {
 		return nil, nil, fmt.Errorf("failed to unmarshal %s: %w", string(b), err)
 	}
 
 	switch v := v.(type) {
 	case bool:
 		return types.BoolType, types.BoolValue(v), nil
-	case float64:
-		return types.NumberType, types.NumberValue(big.NewFloat(v)), nil
+	case json.Number:
+		number, _, err := big.ParseFloat(v.String(), 10, terraformNumberPrecision, big.ToNearestEven)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to parse number %s: %w", v, err)
+		}
+
+		return types.NumberType, types.NumberValue(number), nil
 	case string:
 		return types.StringType, types.StringValue(v), nil
 	case nil:

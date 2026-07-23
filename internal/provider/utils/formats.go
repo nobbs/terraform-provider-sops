@@ -4,6 +4,7 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"strings"
 
@@ -11,6 +12,22 @@ import (
 	"github.com/wlevene/ini"
 	"gopkg.in/yaml.v3"
 )
+
+func decodeJSONPreservingNumbers(data []byte) (any, error) {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+
+	var value any
+	if err := decoder.Decode(&value); err != nil {
+		return nil, json.Unmarshal(data, &value)
+	}
+
+	if len(bytes.TrimSpace(data[decoder.InputOffset():])) != 0 {
+		return nil, json.Unmarshal(data, &value)
+	}
+
+	return value, nil
+}
 
 func IsValidFormat(format string) bool {
 	return format == "yaml" || format == "json" || format == "dotenv" || format == "ini" || format == "binary"
@@ -57,8 +74,7 @@ func ReadYAML(data []byte) ([]byte, error) {
 }
 
 func ReadJSON(data []byte) ([]byte, error) {
-	var v any
-	err := json.Unmarshal(data, &v)
+	v, err := decodeJSONPreservingNumbers(data)
 	if err != nil {
 		return nil, err
 	}
