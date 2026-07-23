@@ -106,6 +106,39 @@ func TestFileFunction_basic_yaml(t *testing.T) {
 	})
 }
 
+func TestFileFunction_post_quantum_age(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fixture := fmt.Sprintf("%s/../../%s", wd, fixture_post_quantum_yaml_file)
+	key := fmt.Sprintf("%s/../../%s", wd, test_post_quantum_age_key_file)
+	t.Setenv("SOPS_AGE_KEY_FILE", key)
+
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.RequireAbove(version.Must(version.NewVersion("1.8.0"))),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testHelperFunctionConfig("file", fixture, ""),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownOutputValue(
+						"test",
+						knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"data": knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"message": knownvalue.StringExact("post-quantum works"),
+							}),
+						}),
+					),
+				},
+			},
+		},
+	})
+}
+
 func TestFileFunction_basic_json(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
