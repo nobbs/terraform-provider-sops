@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/nobbs/terraform-provider-sops/compare/v0.3.2...v0.3.3) (2026-07-23)
+
+
+### Continuous Integration
+
+* support immutable GitHub releases ([#119](https://github.com/nobbs/terraform-provider-sops/issues/119)) ([0f978b3](https://github.com/nobbs/terraform-provider-sops/commit/0f978b329b302dcff866f157af84b082194fd4a7))
+
 ## [0.3.2](https://github.com/nobbs/terraform-provider-sops/compare/v0.3.1...v0.3.2) (2026-07-23)
 
 
