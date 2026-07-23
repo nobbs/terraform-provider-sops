@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright Alexej Disterhoft <alexej@disterhoft.de> 2024, 2026
 // SPDX-License-Identifier: MPL-2.0
 
 //go:build generate
