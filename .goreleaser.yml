@@ -58,6 +58,7 @@ signs:
       - "${artifact}"
 release:
   mode: keep-existing
+  use_existing_draft: true
 
   extra_files:
     - glob: "terraform-registry-manifest.json"

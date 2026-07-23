@@ -1,5 +1,7 @@
 {
   "$schema": "https://github.com/googleapis/release-please/raw/refs/heads/main/schemas/config.json",
+  "draft": true,
+  "force-tag-creation": true,
   "packages": {
     ".": {
       "release-type": "go"
