@@ -1,6 +1,9 @@
 # SOPS Terraform Provider
 
-A Terraform provider for [sops](https://getsops.io/) providing functions to decrypt SOPS-encrypted files and strings. This provider is heavily inspired by [`carlpett/terraform-provider-sops`](https://github.com/carlpett/terraform-provider-sops) but does not rely on data sources and instead uses provider functions. This allows you to decrypt secrets without them necessarily being stored in the Terraform state as plain text.
+A Terraform provider for [sops](https://getsops.io/) providing functions to decrypt SOPS-encrypted files and strings. This provider is heavily inspired by [`carlpett/terraform-provider-sops`](https://github.com/carlpett/terraform-provider-sops) but does not rely on data sources and instead uses provider functions.
+
+> [!WARNING]
+> Provider functions do not store decrypted data independently. However, Terraform stores function results in state when they are assigned to outputs, resource attributes, or other state-backed values. Marking a value as `sensitive` only redacts it from normal output; it does not prevent the plaintext from being stored in state. Protect access to Terraform state accordingly.
 
 ## Requirements
 
