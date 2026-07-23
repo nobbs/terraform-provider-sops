@@ -14,18 +14,16 @@ import (
 )
 
 func decodeJSONPreservingNumbers(data []byte) (any, error) {
-	if !json.Valid(data) {
-		var value any
-
-		return nil, json.Unmarshal(data, &value)
-	}
-
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
 
 	var value any
 	if err := decoder.Decode(&value); err != nil {
-		return nil, err
+		return nil, json.Unmarshal(data, &value)
+	}
+
+	if len(bytes.TrimSpace(data[decoder.InputOffset():])) != 0 {
+		return nil, json.Unmarshal(data, &value)
 	}
 
 	return value, nil
