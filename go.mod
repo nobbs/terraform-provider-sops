@@ -1,6 +1,8 @@
 module github.com/nobbs/terraform-provider-sops
 
-go 1.25.12
+go 1.26.0
+
+toolchain go1.26.5
 
 require (
 	github.com/getsops/sops/v3 v3.13.3
