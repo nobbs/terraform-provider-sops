@@ -41,8 +41,11 @@ func (p *SopsProvider) Schema(ctx context.Context, req provider.SchemaRequest, r
 			This provider is inspired by the
 			[carlpett/terraform-provider-sops](https://registry.terraform.io/providers/carlpett/sops)
 			provider, but instead of using data sources, it implements its functionality as functions.
-			This approach provides more flexibility and ensures that decrypted data is not stored in the
-			state file.
+
+			Provider functions do not store decrypted data independently. However, Terraform stores function
+			results in state when they are assigned to outputs, resource attributes, or other state-backed
+			values. Marking a value as sensitive only redacts it from normal output; it does not prevent the
+			plaintext from being stored in state. Protect access to Terraform state accordingly.
 
 			Moreover, if the decrypted data is in one of the supported formats (` + utils.Code("yaml") + `, ` +
 			utils.Code("json") + `, ` + utils.Code("dotenv") + `, ` + utils.Code("ini") + `), it will also be
